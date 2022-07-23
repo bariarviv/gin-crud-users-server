@@ -102,6 +102,10 @@ func AddUserHandler(ctx *gin.Context) {
 		ctx.String(http.StatusBadRequest, err.Error())
 		return
 	}
+	if _, err = mail.ParseAddress(user.Email); err != nil {
+		ctx.String(http.StatusBadRequest, err.Error())
+		return
+	}
 	if err = DBApi.InsertNewUser(*user); err != nil {
 		ctx.String(getStatusAndMsgErr(err))
 		return
