@@ -54,7 +54,7 @@ func GetInstance(config *Config) *Singleton {
 	return Instance
 }
 
-// ConnectToDb creates a connection to the DB and returns it TODO
+// ConnectToDb creates a connection to the DB and returns it
 func ConnectToDb(config *Config) (*sql.DB, error) {
 	// Uses the url pattern to escape special characters in username or password
 	// POSTGRESQL_URL='postgres://user:password@host:port/db_name?sslmode=disable/require'
