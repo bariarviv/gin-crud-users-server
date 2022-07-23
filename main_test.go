@@ -97,6 +97,7 @@ func TestAddUserHandler(t *testing.T) {
 		{"Adds fail due to incorrect user (nil)", nil, URL, http.StatusBadRequest},
 		{"Adds fail due to incorrect URL", TestUser, SlashSeparator, http.StatusNotFound},
 		{"Adds fail due to incorrect empty user", &models.User{}, URL, http.StatusBadRequest},
+		{"Adds fail due to the invalid email", models.NewUser("abc", "bari", "1234"), URL, http.StatusBadRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
