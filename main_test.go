@@ -144,9 +144,9 @@ func TestGetUserHandler(t *testing.T) {
 			// Prints the users map
 			printUsersMap()
 			// Performs the request
-			request, err := newFileUploadRequest(tt.email, tt.url, http.MethodGet)
+			request, err := newFormDataRequest(tt.email, tt.url, http.MethodGet)
 			if err != nil {
-				t.Errorf("newFileUploadRequest Error: %v\n", err)
+				t.Errorf("newFormDataRequest Error: %v\n", err)
 			}
 			router.ServeHTTP(respRecorder, request)
 			assert.Equal(t, respRecorder.Code, tt.wantCode)
@@ -216,9 +216,9 @@ func TestDeleteUserHandler(t *testing.T) {
 			// Prints the users map
 			printUsersMap()
 			// Performs the request
-			request, err := newFileUploadRequest(tt.email, tt.url, http.MethodDelete)
+			request, err := newFormDataRequest(tt.email, tt.url, http.MethodDelete)
 			if err != nil {
-				t.Errorf("newFileUploadRequest Error: %v\n", err)
+				t.Errorf("newFormDataRequest Error: %v\n", err)
 			}
 			router.ServeHTTP(respRecorder, request)
 			assert.Equal(t, respRecorder.Code, tt.wantCode)
@@ -274,8 +274,8 @@ func createNewRequest(method, url, contentType string, body io.Reader) (*http.Re
 	return request, nil
 }
 
-// newFileUploadRequest creates an HTTP request and sends an email using FormData
-func newFileUploadRequest(email, url, method string) (*http.Request, error) {
+// newFormDataRequest creates an HTTP request and sends an email using FormData
+func newFormDataRequest(email, url, method string) (*http.Request, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	writer.WriteField(FieldName, email)
@@ -284,7 +284,7 @@ func newFileUploadRequest(email, url, method string) (*http.Request, error) {
 	return createNewRequest(method, url, writer.FormDataContentType(), body)
 }
 
-// newFileUploadRequest creates an HTTP request and adds JSON to the body
+// newBindJSONRequest creates an HTTP request and adds JSON to the body
 func newBindJSONRequest(user *models.User, url, method string) (*http.Request, error) {
 	buf, err := json.Marshal(&user)
 	if err != nil {
