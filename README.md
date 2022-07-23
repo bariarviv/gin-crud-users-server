@@ -1,21 +1,22 @@
-# GoGin - CRUD Server
+# GoGin - CRUD Users Server
 ![Coverage](https://img.shields.io/badge/Coverage-62.4%25-brightgreen)
+
 
 ## Gin Golang
 [Gin](https://github.com/gin-gonic/gin) is a web framework written in Go (Golang). It features a martini-like API with performance that is up to 40 times faster thanks to httprouter.
 
-### Advantages:
+### Advantages
 1. Simple code - can save the developer a lot of time in large projects.
 2. High performance.
 3. Error management.
 4. Easy JSON authentication.
 5. Gin has a mode test.
 
-### Disadvantages:
+### Disadvantages
 1. Not flexible in development.
 2. Can add more complexity to your project and slow down the development time, the infrastructure now depends on the package that other people maintain.
 
-### Alternative Solutions:
+### Alternative Solutions
 1. [net/http:](https://github.com/golang/go) it's easier to use and can handle more cases.
 2. [fasthttp:](https://github.com/valyala/fasthttp) was designed for some high-performance edge cases.
 3. [fiber:](https://github.com/gofiber/fiber) built on top of the fasthttp HTTP engine for Go, which is the fastest HTTP engine for Go.
@@ -39,10 +40,10 @@ Backend Golang application that has the following routes (using gin):
 
 ## Running Step
 ```
-docker compose up --build
+$ docker compose up --build
 ```
 
-#### For example:
+### For example
 ```
 [baria@~ gin-crud-users-server]$ docker compose up --build
 [+] Building 40.2s (17/17) FINISHED
@@ -155,6 +156,32 @@ gin-crud-users-server-server-1    | [GIN] 2022/07/23 - 13:32:44 | 400 |      32.
 gin-crud-users-server-server-1    | [GIN] 2022/07/23 - 13:33:17 | 200 |   25.724964ms |      172.31.0.1 | POST     "/user"
 gin-crud-users-server-server-1    | [GIN] 2022/07/23 - 13:33:20 | 200 |    1.645589ms |      172.31.0.1 | GET      "/users"
 ```
+
+### Examples of curl commands
+* For testing PUT /user
+    ```
+    curl -X PUT https://localhost:3000/user \
+         --header "Content-Type: application/json" \
+         --data '{"email": "<email>","name": "<username>","password": "<password>"}'
+    ```
+* For testing GET /user
+    ```
+    curl -X GET https://localhost:3000/user --form 'email=bari@gmail.com'
+    ```
+* For testing POST /user
+    ```
+    curl -X POST https://localhost:3000/user \
+         --header "Content-Type: application/json" \
+         --data '{"email": "<email>","name": "<username>","password": "<password>"}'
+    ```
+* For testing DELETE /user
+    ```
+    curl -X DELETE https://localhost:3000/user --form 'email=<email>'
+    ```
+* For testing GET /users
+    ```
+    curl -X GET https://localhost:3000/users
+    ```
 
 
 ## Unit Tests Output
