@@ -166,7 +166,7 @@ gin-crud-users-server-server-1    | [GIN] 2022/07/23 - 13:33:20 | 200 |    1.645
     ```
 * For testing GET /user
     ```
-    curl -X GET https://localhost:3000/user --form 'email=bari@gmail.com'
+    curl -X GET https://localhost:3000/user --form 'email=<email>'
     ```
 * For testing POST /user
     ```
