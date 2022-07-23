@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"net/url"
+	"os"
 	"sync"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -15,8 +17,7 @@ type Config struct {
 	User     string
 	Password string
 	DBName   string
-	SSL      string //disable/require
-	//SchemaName string
+	SSL      string
 }
 
 type Singleton struct {
@@ -36,7 +37,6 @@ func NewConfig(host, port, user, pass, name, ssl string) *Config {
 		Password: pass,
 		DBName:   name,
 		SSL:      ssl,
-		//SchemaName: schema,
 	}
 }
 
@@ -44,7 +44,8 @@ func GetInstance(config *Config) *Singleton {
 	once.Do(func() {
 		db, err := ConnectToDb(config)
 		if err != nil {
-			// TODO - EXIT!
+			fmt.Printf("ConnectToDb Error: %v\n", err)
+			os.Exit(0)
 		}
 		Instance = &Singleton{
 			Db: db,
@@ -55,18 +56,20 @@ func GetInstance(config *Config) *Singleton {
 
 // ConnectToDb creates a connection to the DB and returns it TODO
 func ConnectToDb(config *Config) (*sql.DB, error) {
-	//schema := ""
-	//if config.SchemaName != "" {
-	//	schema = fmt.Sprintf("search_path=%s&", config.SchemaName)
-	//}
-	// use the url pattern to escape special characters in username or password
-	url := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?%ssslmode=%s", url.QueryEscape(config.User),
-		url.QueryEscape(config.Password), config.Hostname, config.Port, config.DBName, "", config.SSL)
+	// Uses the url pattern to escape special characters in username or password
+	// POSTGRESQL_URL='postgres://user:password@host:port/db_name?sslmode=disable/require'
+	url := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", url.QueryEscape(config.User),
+		url.QueryEscape(config.Password), config.Hostname, config.Port, config.DBName, config.SSL)
 
 	db, err := sql.Open("postgres", url)
 	if err != nil {
 		return db, err
 	}
-	//db.SetConnMaxLifetime(30 * time.Second)
+	
+	time.Sleep(60 * time.Second)
+	if err = db.Ping(); err != nil {
+		return db, err
+	}
+	db.SetConnMaxLifetime(30 * time.Second)
 	return db, nil
 }
