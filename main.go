@@ -8,6 +8,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/mail"
 	"os"
 
 	"gin_CRUD_server/db"
@@ -180,6 +181,9 @@ func getEmail(ctx *gin.Context) (string, error) {
 	email := ctx.PostForm(FieldName)
 	if email == "" {
 		return email, fmt.Errorf("Please add an email to the form-data request\n")
+	}
+	if _, err := mail.ParseAddress(email); err != nil {
+		return email, err
 	}
 	return email, nil
 }
