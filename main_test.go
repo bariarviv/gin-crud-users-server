@@ -130,9 +130,10 @@ func TestGetUserHandler(t *testing.T) {
 		wantCode int
 	}{
 		{"Gets fail due to empty email", URL, "", http.StatusBadRequest},
+		{"Gets fail due to the invalid email", URL, "abc", http.StatusBadRequest},
 		{"Gets an existing user successfully", URL, TestUser.Email, http.StatusOK},
-		{"Gets fail due to incorrect URL", SlashSeparator, TestUser.Email, http.StatusNotFound},
 		{"Gets fail due to the user doesn't exist", URL, "a@gmail.com", http.StatusNotFound},
+		{"Gets fail due to incorrect URL", SlashSeparator, TestUser.Email, http.StatusNotFound},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -202,6 +203,7 @@ func TestDeleteUserHandler(t *testing.T) {
 	}{
 		{"Deletes fail due to empty email", "", URL, http.StatusBadRequest},
 		{"Deletes user successfully", TestUser.Email, URL, http.StatusOK},
+		{"Deletes fail due to the invalid email", "abc", URL, http.StatusBadRequest},
 		{"Deletes fail due to incorrect URL", TestUser.Email, SlashSeparator, http.StatusNotFound},
 		{"Deletes fail due to the user doesn't exist", TestUser.Email + "abc", URL, http.StatusNotFound},
 	}
