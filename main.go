@@ -33,7 +33,10 @@ var (
 
 func main() {
 	// Setups the DB instance
-	setupDB(Host, DBPort)
+	if err := setupDB(Host, DBPort); err != nil {
+		fmt.Println(err)
+		return
+	}
 	if _, err := setupRouter(CertFile, KeyFile, Port); err != nil {
 		fmt.Println(err)
 		return
@@ -41,15 +44,23 @@ func main() {
 }
 
 // setupDB setups the DB instance
-func setupDB(host, port string) {
+func setupDB(host, port string) error {
+	ch := make(chan error, 1)
 	dbName := os.Getenv("POSTGRES_DB")
 	dbSSL := os.Getenv("POSTGRES_SSL")
 	dbUser := os.Getenv("POSTGRES_USER")
 	dbPassword := os.Getenv("POSTGRES_PASSWORD")
 
 	config := db.NewConfig(host, port, dbUser, dbPassword, dbName, dbSSL)
-	db.GetInstance(config)
+	db.GetInstance(ch, config)
+	select {
+	case err, _ := <-ch:
+		if err != nil {
+			return err
+		}
+	}
 	DBApi = db.SqlOps{Name: "SQL Server"}
+	return nil
 }
 
 // setupRouter setups the server and the routers according to the HTTP requests
