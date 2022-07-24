@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"net/url"
-	"os"
 	"sync"
 	"time"
 
@@ -40,12 +39,13 @@ func NewConfig(host, port, user, pass, name, ssl string) *Config {
 	}
 }
 
-func GetInstance(config *Config) *Singleton {
+func GetInstance(ch chan error, config *Config) *Singleton {
+	defer close(ch)
 	once.Do(func() {
 		db, err := ConnectToDb(config)
 		if err != nil {
-			fmt.Printf("ConnectToDb Error: %v\n", err)
-			os.Exit(0)
+			ch <- fmt.Errorf("ConnectToDb Error: %v\n", err)
+			return
 		}
 		Instance = &Singleton{
 			Db: db,
@@ -66,7 +66,7 @@ func ConnectToDb(config *Config) (*sql.DB, error) {
 		return db, err
 	}
 	
-	time.Sleep(60 * time.Second)
+	time.Sleep(10 * time.Second)
 	if err = db.Ping(); err != nil {
 		return db, err
 	}
